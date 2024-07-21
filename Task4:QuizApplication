@@ -1,0 +1,65 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class QuizApplication {
+
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final int TIME_LIMIT = 10; // time limit per question in seconds
+    private static Timer timer;
+    private static boolean timeUp = false;
+
+    public static void main(String[] args) {
+        String[][] questions = {
+            {"What is the capital of France?", "A. Berlin", "B. Madrid", "C. Paris", "D. Rome", "C"},
+            {"Which planet is known as the Red Planet?", "A. Earth", "B. Mars", "C. Jupiter", "D. Saturn", "B"},
+            {"What is the largest ocean on Earth?", "A. Atlantic", "B. Indian", "C. Arctic", "D. Pacific", "D"}
+        };
+
+        int score = 0;
+
+        for (String[] question : questions) {
+            if (askQuestion(question)) {
+                score++;
+            }
+        }
+
+        System.out.println("Quiz over! Your score is: " + score + "/" + questions.length);
+    }
+
+    private static boolean askQuestion(String[] question) {
+        System.out.println(question[0]);
+        for (int i = 1; i <= 4; i++) {
+            System.out.println(question[i]);
+        }
+
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                timeUp = true;
+                System.out.println("\nTime's up! Moving to the next question.");
+            }
+        };
+        timer.schedule(task, TIME_LIMIT * 1000);
+
+        String answer = getUserInput();
+        timer.cancel();
+
+        if (timeUp) {
+            timeUp = false;
+            return false;
+        }
+
+        return answer.equalsIgnoreCase(question[5]);
+    }
+
+    private static String getUserInput() {
+        String input = null;
+        try {
+            input = scanner.nextLine();
+        } catch (Exception e) {
+            // Handle input error
+        }
+        return input;
+    }
+}
